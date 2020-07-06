@@ -36,12 +36,13 @@ class Control:
         mousepad_center = (210, 450)
         self.chair = Chair((400, 300))
         self.mousepad = Mousepad(mousepad_center)
-        self.keyboard = Keyboard((600, 460))
+        self.keyboard = Keyboard((560, 440))
         self.body = Body((390, 350))
         self.eyes = Eyes((390, 270))
         self.mouth = Mouth((388, 293))
 
-        self.hand = MouseHand(mousepad_center, (100, 38))
+        self.mouse_hand = MouseHand(mousepad_center, (100, 38))
+        self.keyboard_hand = KeyboardHand(self.keyboard)
 
     def update(self, dt):
         # draw the eyes
@@ -56,8 +57,13 @@ class Control:
         
         # mouse mouvement
         if not self.mouse_queue.empty():
-            self.hand.move_mouse(self.mouse_queue.get())
-        self.hand.draw(self.screen, dt)
+            self.mouse_hand.move_mouse(self.mouse_queue.get())
+        self.mouse_hand.draw(self.screen, dt)
+
+        # keyboard hand
+        if not self.keyboard_queue.empty():
+            self.keyboard_hand.click_keyboard(self.keyboard_queue.get())
+        self.keyboard_hand.draw(self.screen, dt)
 
 
     def event_loop(self):
@@ -86,7 +92,7 @@ class Control:
             self.mousepad.draw(self.screen)
 
             # keyboard
-            self.keyboard.draw(self.screen)
+            self.keyboard.draw(self.screen, delta_time)
             self.update(delta_time)
             pg.display.update()
 
@@ -108,10 +114,16 @@ def main_game(audio_queue, keyboard_queue, mouse_queue):
 
 
 if __name__=="__main__":
+    # setup the audio listener
     audio_queue = queue.Queue(-1)
     audio_listener = AudioInputListener(audio_queue)
     audio_listener.listen()
+    # setup the mouse listener
     mouse_queue = queue.Queue(-1)
     mouse_listener = MouseListener(mouse_queue)
     mouse_listener.listen()
-    main_game(audio_queue, None, mouse_queue)
+    # setup the keyboard listener
+    keyboard_queue = queue.Queue(-1)
+    keyboard_listener = KeyboardListener(keyboard_queue)
+    keyboard_listener.listen()
+    main_game(audio_queue, keyboard_queue, mouse_queue)

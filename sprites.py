@@ -1,5 +1,9 @@
 import pygame as pg
 import os
+import random
+
+from keyboardListener import KeyboardListener
+
 
 
 class Chair(pg.sprite.Sprite):
@@ -26,10 +30,30 @@ class Keyboard(pg.sprite.Sprite):
             0,
             0.5
         )
+        self.pos = pos
         self.rect = self.image.get_rect(center=pos)
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        self.shaking = False
+        self.shaking_counter = 0
+
+    def draw(self, screen, dt):
+        if self.shaking:
+            new_pos = (self.pos[0] + random.choice([-1, 1]), self.pos[1] + random.choice([-1, 1]))
+            screen.blit(self.image, self.image.get_rect(center=new_pos))
+            if self.shaking_counter * dt > 20: # 20ms shake animation
+                self.shaking = False
+
+            self.shaking_counter += 1
+        else:
+            screen.blit(self.image, self.rect)
+
+
+    def shake(self):
+        self.shaking = True
+        self.shaking_counter = 0
+
+
+    
 
 
 
@@ -162,4 +186,91 @@ class MouseHand:
         pg.draw.line(screen, (172,107,48), (self.starting_pos[0]-3, self.starting_pos[1]-3), self.hand_pos, 30)
         self.mouse.draw(screen, dt)
         pg.draw.circle(screen, (172,107,48), (self.hand_pos[0] + 9, self.hand_pos[1] - 24), 18)
+
+
+class State:
+    IDLE = 0
+    CLICKING_A = 1
+    CLICKING_B = 2
+    CLICKING_SPACE = 3
+    CLICKING_ENTER = 4
+
+class KeyboardHand:
+
+
+    def __init__(self, keyboard):
+        self.keyboard = keyboard
+        self.starting_pos = (550, 350)
+        self.idle_hand_pos = (600, 400)
+        self.click_pos_a = (540, 410)
+        self.click_pos_b = (650, 400)
+        self.click_pos_space = (560, 375)
+        self.click_pos_enter = (460, 420)
+
+        # set state to idle at the beginning
+        self.hand_pos = self.idle_hand_pos
+        self.state = State.IDLE
+        self.click_ab_toggle = True
+
+        
+
+    def click_keyboard(self, clicktype):
+        clicking = self.state != State.IDLE
+
+        # if its clicking
+        if clicking and clicktype == KeyboardListener.DOWN:
+            return # keep clicking
+
+        if clicking and clicktype == KeyboardListener.UP:
+            self.alter_state(State.IDLE)
+            return
+
+        if clicking:
+            return
+        # if its idle
+
+        if clicktype == KeyboardListener.SPACE:
+            self.alter_state(State.CLICKING_SPACE)
+        
+        if clicktype == KeyboardListener.ENTER:
+            self.alter_state(State.CLICKING_ENTER)
+        
+        if clicktype == KeyboardListener.DOWN:
+            if self.click_ab_toggle:
+                self.alter_state(State.CLICKING_A)
+            else:
+                self.alter_state(State.CLICKING_B)
+
+            self.click_ab_toggle = not self.click_ab_toggle
+            
+        self.keyboard.shake()
+
+
+
+
+    def alter_state(self, new_state):
+        if new_state == State.IDLE:
+            self.hand_pos = self.idle_hand_pos
+        elif new_state == State.CLICKING_A:
+            self.hand_pos = self.click_pos_a
+        elif new_state == State.CLICKING_B:
+            self.hand_pos = self.click_pos_b
+        elif new_state == State.CLICKING_SPACE:
+            self.hand_pos = self.click_pos_space
+        elif new_state == State.CLICKING_ENTER:
+            self.hand_pos = self.click_pos_enter
+        else:
+            return
+        
+        self.state = new_state
+
+
+    def draw(self, screen, dt):
+        pg.draw.circle(screen, (172,107,48), self.starting_pos, 20)
+
+        pg.draw.line(screen, (172,107,48), self.starting_pos, self.hand_pos, 31)
+        pg.draw.line(screen, (172,107,48), (self.starting_pos[0]+3, self.starting_pos[1]+3), self.hand_pos, 30)
+        pg.draw.line(screen, (172,107,48), (self.starting_pos[0]-3, self.starting_pos[1]-3), self.hand_pos, 30)
+        pg.draw.circle(screen, (172,107,48), (self.hand_pos[0], self.hand_pos[1]), 18)
+
 

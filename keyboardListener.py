@@ -2,8 +2,10 @@ from pynput import keyboard
 import queue
 
 class KeyboardListener:
-    DOWN = 1
     UP = 0
+    DOWN = 1
+    SPACE = 2
+    ENTER = 3
 
     def __init__(self, event_queue : queue.Queue):
         self.event_queue : queue.Queue = event_queue
@@ -14,7 +16,12 @@ class KeyboardListener:
         )
 
     def on_press(self, key):
-        self.event_queue.put(KeyboardListener.DOWN)
+        if key == keyboard.Key.space:
+            self.event_queue.put(KeyboardListener.SPACE)
+        elif key == keyboard.Key.enter:
+            self.event_queue.put(KeyboardListener.ENTER)
+        else:
+            self.event_queue.put(KeyboardListener.DOWN)
 
     def on_release(self, key):
         self.event_queue.put(KeyboardListener.UP)
