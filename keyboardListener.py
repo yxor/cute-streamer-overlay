@@ -29,10 +29,3 @@ class KeyboardListener:
 
     def listen(self):
         self.listener.start()
-
-if __name__=="__main__":
-    # just testing the listener
-    keyboard_queue = queue.Queue(-1)
-    keyboard_listener = KeyboardListener(keyboard_queue)
-    keyboard_listener.listen()
-    input()

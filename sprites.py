@@ -296,5 +296,3 @@ class KeyboardHand:
         pg.draw.line(screen, (172,107,48), (self.starting_pos[0]+3, self.starting_pos[1]+3), self.hand_pos, 30)
         pg.draw.line(screen, (172,107,48), (self.starting_pos[0]-3, self.starting_pos[1]-3), self.hand_pos, 30)
         pg.draw.circle(screen, (172,107,48), (self.hand_pos[0], self.hand_pos[1]), 18)
-
-

@@ -98,7 +98,7 @@ class Control:
             pg.display.update()
 
 
-def main_game(audio_queue, keyboard_queue, mouse_queue):
+def play_animation(audio_queue, keyboard_queue, mouse_queue):
     settings = {
         'size': (800, 600),
         'fps' : 60,
@@ -112,19 +112,3 @@ def main_game(audio_queue, keyboard_queue, mouse_queue):
     game.game_loop()
     pg.quit()
     sys.exit()
-
-
-if __name__=="__main__":
-    # setup the audio listener
-    audio_queue = queue.Queue(-1)
-    audio_listener = AudioInputListener(audio_queue)
-    audio_listener.listen()
-    # setup the mouse listener
-    mouse_queue = queue.Queue(-1)
-    mouse_listener = MouseListener(mouse_queue)
-    mouse_listener.listen()
-    # setup the keyboard listener
-    keyboard_queue = queue.Queue(-1)
-    keyboard_listener = KeyboardListener(keyboard_queue)
-    keyboard_listener.listen()
-    main_game(audio_queue, keyboard_queue, mouse_queue)

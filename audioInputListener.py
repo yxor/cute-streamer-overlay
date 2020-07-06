@@ -5,7 +5,7 @@ import queue
 
 class AudioInputListener:
 
-    def __init__(self, event_queue : queue.Queue, min_threshold=1, max_threshold=7):
+    def __init__(self, event_queue : queue.Queue, min_threshold=3, max_threshold=10):
         self.event_queue : queue.Queue = event_queue
         self.min_threshold = min_threshold
         self.max_threshold = max_threshold
@@ -26,10 +26,3 @@ class AudioInputListener:
 
     def listen(self):
         self.stream.start()
-
-
-if __name__=="__main__":
-    audio_queue = queue.Queue(-1)
-    audio_listener = AudioInputListener(audio_queue)
-    audio_listener.listen()
-    input()

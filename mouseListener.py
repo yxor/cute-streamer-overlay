@@ -43,17 +43,3 @@ class MouseListener:
 
     def listen(self):
         self.listener.start()
-
-
-
-if __name__=="__main__":
-    ## just testing the listener
-    mouse_queue = queue.Queue(-1)
-    mouse_listener = MouseListener(mouse_queue)
-    mouse_listener.listen()
-    input()
-    while not mouse_queue.empty():
-        print(mouse_queue.get())
-
-
-
