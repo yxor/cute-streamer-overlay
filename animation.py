@@ -1,3 +1,8 @@
+from sprites import *
+from audioInputListener import AudioInputListener
+from mouseListener import MouseListener
+from keyboardListener import KeyboardListener
+
 import pygame as pg
 import sys
 import os
@@ -6,10 +11,6 @@ import win32con
 import win32gui
 import queue
 
-from sprites import *
-from audioInputListener import AudioInputListener
-from mouseListener import MouseListener
-from keyboardListener import KeyboardListener
 
 TRANSPARENT_COLOR = (1, 2, 5)  # Transparency color
 
