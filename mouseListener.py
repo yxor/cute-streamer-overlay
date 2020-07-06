@@ -37,6 +37,8 @@ class MouseListener:
         self.norm_old_x, self.norm_old_y = norm_move
 
         ## add the mouvement to the mouse event queue
+
+        self.event_queue.queue.clear()
         self.event_queue.put(norm_move)
 
     def listen(self):

@@ -49,15 +49,16 @@ class Control:
         self.eyes.draw(self.screen, dt)
 
         # mouth mouvement
-        if not self.audio_queue.empty():
+        if not self.audio_queue.empty() and not self.mouth.is_expressing:
             audio_level = self.audio_queue.get()
-            self.mouth.draw(self.screen, audio_level, dt)
-        else:
-            self.mouth.draw(self.screen, 0, dt)
+            self.mouth.change_audio_level(audio_level)
+
+        self.mouth.draw(self.screen, dt)
         
         # mouse mouvement
         if not self.mouse_queue.empty():
-            self.mouse_hand.move_mouse(self.mouse_queue.get())
+            self.mouse_hand.update_target(self.mouse_queue.get())
+        
         self.mouse_hand.draw(self.screen, dt)
 
         # keyboard hand
@@ -100,7 +101,7 @@ class Control:
 def main_game(audio_queue, keyboard_queue, mouse_queue):
     settings = {
         'size': (800, 600),
-        'fps' : 30,
+        'fps' : 60,
         'icon': None,
         'audio_queue': audio_queue,
         'mouse_queue': mouse_queue,

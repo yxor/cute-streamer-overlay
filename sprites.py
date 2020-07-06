@@ -140,9 +140,25 @@ class Mouth(pg.sprite.Sprite):
             ) for image_index in range(4)
         ]
         self.rects = [image.get_rect(center=pos) for image in self.images]
+        self.expression = 0
+        self.is_expressing = False
+        self.expression_counter = 0
 
-    def draw(self, screen, audio_level, dt):
-        screen.blit(self.images[audio_level], self.rects[audio_level])
+    def change_audio_level(self, audio_level):
+        self.expression = audio_level
+        self.is_expressing = True
+        self.expression_counter = 0
+
+    def draw(self, screen, dt):
+        screen.blit(self.images[self.expression], self.rects[self.expression])
+        expression_progress = self.expression_counter * dt
+        if expression_progress > 5: # 5ms
+            self.expression = 0
+            self.is_expressing = False
+        
+        self.expression_counter += 1
+
+
 
 
 class Mouse(pg.sprite.Sprite):
@@ -169,23 +185,31 @@ class MouseHand:
         self.mouse = Mouse(mousepad_center)
         self.mousepad_size = mousepad_size
         self.mousepad_origin = (mousepad_center[0] + (mousepad_size[0]//2), mousepad_center[1] + (mousepad_size[1]//2)) 
+        self.target_pos = mousepad_center
 
-    def move_mouse(self, mouse_pos):
-        new_pos = (
+
+    def update_target(self, mouse_pos):
+        self.target_pos = (
             int(self.mousepad_origin[0] - self.mousepad_size[0] * mouse_pos[0]),
             int(self.mousepad_origin[1] - self.mousepad_size[1] * mouse_pos[1])
         )
-        self.hand_pos = new_pos
-        self.mouse.rect = self.mouse.image.get_rect(center=new_pos)
 
     def draw(self, screen, dt):
-        
+
+
         pg.draw.circle(screen, (172,107,48), self.starting_pos, 20)
         pg.draw.line(screen, (172,107,48), self.starting_pos, self.hand_pos, 31)
         pg.draw.line(screen, (172,107,48), (self.starting_pos[0]+3, self.starting_pos[1]+3), self.hand_pos, 30)
         pg.draw.line(screen, (172,107,48), (self.starting_pos[0]-3, self.starting_pos[1]-3), self.hand_pos, 30)
         self.mouse.draw(screen, dt)
         pg.draw.circle(screen, (172,107,48), (self.hand_pos[0] + 9, self.hand_pos[1] - 24), 18)
+        
+        if not (self.target_pos == self.hand_pos):
+            stepx = (self.target_pos[0] - self.hand_pos[0]) /10
+            stepy = (self.target_pos[1] - self.hand_pos[1]) /10
+
+            self.hand_pos = (int(self.hand_pos[0] + stepx), int(self.hand_pos[1] + stepy))
+            self.mouse.rect = self.mouse.image.get_rect(center=self.hand_pos)
 
 
 class State:
