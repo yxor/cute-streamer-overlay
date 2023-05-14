@@ -1,6 +1,6 @@
 # v-streamer
 
-Virtual streaming camera
+Virtual streaming camera to use as an OBS overlay.
 
 
 ## setup
