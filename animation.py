@@ -29,9 +29,11 @@ class Control:
         
 
         pg.init()
-        set_transparency_color()
         self.screen = pg.display.set_mode(self.size)
         self.clock = pg.time.Clock()
+
+        # Set the colors after initiating the window
+        set_transparency_color()
         # set Icon
         # pg.display.set_icon(self.icon)
         mousepad_center = (210, 450)
